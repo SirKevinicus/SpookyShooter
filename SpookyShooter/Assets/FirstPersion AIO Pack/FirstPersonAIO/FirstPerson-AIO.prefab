@@ -136,8 +136,8 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: c1f63923be799dc4c9a740b6ffdca404, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
+  m_Volume: 0.8
+  m_Pitch: 0.75
   Loop: 0
   Mute: 0
   Spatialize: 0
@@ -220,7 +220,26 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1839938186
+--- !u!95 &1839938188
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1694449053947404}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f462a3583ff84f44ea8b9555e93c0dcf, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1420373598223691587
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -229,18 +248,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1694449053947404}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: defbd735c60582043a38e3bd0ee55c20, type: 3}
+  m_Script: {fileID: 11500000, guid: 14409653388f8f24591dfecbaf7deba9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fpsCam: {fileID: 20724644957976244}
-  hitLayers:
-    serializedVersion: 2
-    m_Bits: 55
-  dmgDealtUIPrefab: {fileID: 25451943619227647, guid: cd53b461339ccda4b87d562acbfbf417,
-    type: 3}
   damage: 10
   range: 100
   fireRate: 0.4
+  fpsCam: {fileID: 0}
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  dmgDealtUIPrefab: {fileID: 25451943619227647, guid: cd53b461339ccda4b87d562acbfbf417,
+    type: 3}
 --- !u!1 &1743903104223250
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,6 +273,7 @@ GameObject:
   - component: {fileID: 54587624234064098}
   - component: {fileID: 136239539305442568}
   - component: {fileID: 114051214696948948}
+  - component: {fileID: 5984281674928842823}
   m_Layer: 8
   m_Name: FirstPerson-AIO
   m_TagString: Player
@@ -287,7 +307,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: c1f63923be799dc4c9a740b6ffdca404, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -472,7 +492,7 @@ MonoBehaviour:
   headbobHeight: 1
   headbobSideMovement: 0.5
   jumpLandIntensity: 3
-  enableAudioSFX: 1
+  enableAudioSFX: 0
   Volume: 5
   jumpSound: {fileID: 0}
   landSound: {fileID: 0}
@@ -538,6 +558,19 @@ MonoBehaviour:
     - {fileID: 8300000, guid: fef61cddf814a2c49bf7a6c33791c766, type: 3}
     - {fileID: 8300000, guid: 73f938638097f8042ad7842aa5b04ac5, type: 3}
     - {fileID: 8300000, guid: e06c6ae1948cafd45a952ab85ebe4fa7, type: 3}
+--- !u!114 &5984281674928842823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743903104223250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2ef479fb36bde74082a38c1ef416cbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 0}
 --- !u!1001 &2135771474
 PrefabInstance:
   m_ObjectHideFlags: 0

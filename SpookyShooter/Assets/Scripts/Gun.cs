@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gun : MonoBehaviour
+public abstract class Gun : MonoBehaviour
 {
-    public Camera fpsCam;
-    public LayerMask hitLayers;
-    public GameObject dmgDealtUIPrefab;
-
     // COMPONENTS
     private Animator animator;
     private AudioSource shootSound;
@@ -18,11 +14,16 @@ public class Gun : MonoBehaviour
 
     private bool canShoot;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
+    {
+        Initialize();
+    }
+
+    public virtual void Initialize()
     {
         shootSound = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
+
         canShoot = true;
     }
 
@@ -38,33 +39,17 @@ public class Gun : MonoBehaviour
     void Shoot()
     {
         ShootSFX(); // play gunshot
-        animator.SetTrigger("Shoot"); // play shoot animation
-        StartCoroutine(ShootCooldown());
 
-        RaycastHit hit;
-        if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range, hitLayers))
-        {
-            if(hit.transform.GetComponent<Enemy>() != null)
-            {
-                ShowDmgIndicator(hit);
-            }
+        // play shoot animation
+        animator.SetTrigger("Shoot");
 
-            //Debug.Log(hit.transform.name);
-        }
+        // trigger cooldown
+        StartCoroutine(ShootCooldown()); 
+
+        HandleShoot();
     }
 
-    private void ShowDmgIndicator(RaycastHit hit)
-    {
-        if (dmgDealtUIPrefab == null) return;
-
-        Renderer hitRend = hit.transform.GetComponent<Renderer>();
-        float hitTopBound = hitRend.bounds.extents.y;
-
-        Debug.Log(hitTopBound);
-
-        Vector3 dmgIndicatorPos = hit.transform.position + new Vector3(0, hitTopBound, 0);
-        Instantiate(dmgDealtUIPrefab, dmgIndicatorPos, Quaternion.identity);
-    }
+    protected abstract void HandleShoot();
 
     private IEnumerator ShootCooldown()
     {
