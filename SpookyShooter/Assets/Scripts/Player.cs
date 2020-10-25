@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
     public void DisableMovement()
     {
         fpc.playerCanMove = false;
-        rb.isKinematic = true;
+        //rb.isKinematic = true;
         fpc.enableCameraMovement = false;
         cam.gameObject.SetActive(false);
     }
@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
     public void EnableMovement()
     {
         fpc.playerCanMove = true;
-        rb.isKinematic = false;
+        //rb.isKinematic = false;
         fpc.enableCameraMovement = true;
         cam.gameObject.SetActive(true);
     }

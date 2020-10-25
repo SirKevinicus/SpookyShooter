@@ -14,6 +14,7 @@ public class ShootingGallery : MonoSingleton<ShootingGallery>
     public GameObject shootingUI;
 
     public bool playerInside = false;
+    public bool playerInRange = false;
 
     // Start is called before the first frame update
     void Start()
@@ -21,23 +22,38 @@ public class ShootingGallery : MonoSingleton<ShootingGallery>
         boothGun = GetComponentInChildren<Gun>();
         boothCam.gameObject.SetActive(false);
         shootingUI.SetActive(false);
-        playerInside = false;
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if(Input.GetKeyDown(KeyCode.E) & !playerInside)
+        if ((player = other.GetComponent<Player>()) != null)
         {
-            if((player = other.GetComponent<Player>()) != null)
+            playerInRange = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if((player = other.GetComponent<Player>()) != null)
+        {
+            player = null;
+            playerInRange = false;
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.E) & playerInRange)
+        {
+            if(!playerInside)
             {
                 StartShootingGallery();
             }
-        }
-
-        else if(Input.GetKeyDown(KeyCode.E) & playerInside)
-        {
-            Debug.Log("HLLO");
-            EndShootingGallery();
+            else
+            {
+                EndShootingGallery();
+            }
         }
     }
 
@@ -68,10 +84,5 @@ public class ShootingGallery : MonoSingleton<ShootingGallery>
         player.gameObject.SetActive(true);
         player.pistol.EnableGun();
         boothGun.DisableGun();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 }
