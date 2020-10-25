@@ -2,17 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ToyGun : MonoBehaviour
+public class ToyGun : Gun
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void HandleShoot()
     {
-        
+        Debug.Log("SHOT TOY GUN.");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

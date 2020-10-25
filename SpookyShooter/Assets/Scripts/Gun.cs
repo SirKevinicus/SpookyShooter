@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public abstract class Gun : MonoBehaviour
 {
     // COMPONENTS
@@ -12,6 +13,7 @@ public abstract class Gun : MonoBehaviour
     public float range = 100f;
     public float fireRate = 0.4f;
 
+    public bool isActiveGun = false;
     private bool canShoot;
 
     private void Start()
@@ -30,7 +32,7 @@ public abstract class Gun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetButtonDown("Fire1") & canShoot)
+        if(Input.GetButtonDown("Fire1") & isActiveGun & canShoot)
         {
             Shoot();
         }
@@ -49,7 +51,17 @@ public abstract class Gun : MonoBehaviour
         HandleShoot();
     }
 
-    protected abstract void HandleShoot();
+    public void DisableGun()
+    {
+        isActiveGun = false;
+    }
+
+    public void EnableGun()
+    {
+        isActiveGun = true;
+    }
+
+    public abstract void HandleShoot();
 
     private IEnumerator ShootCooldown()
     {
@@ -60,6 +72,6 @@ public abstract class Gun : MonoBehaviour
 
     private void ShootSFX()
     {
-        shootSound.Play();
+        if(shootSound != null) shootSound.Play();
     }
 }

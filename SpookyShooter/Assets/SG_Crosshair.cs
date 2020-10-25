@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SG_Crosshair : MonoBehaviour
 {
+    public Gun myGun;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +28,7 @@ public class SG_Crosshair : MonoBehaviour
                 if((target = hit.transform.GetComponentInParent<Target>()) != null)
                 {
                     target.GetShot();
+                    myGun.HandleShoot();
                 }
             }
         }

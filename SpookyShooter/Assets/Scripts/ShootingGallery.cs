@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class ShootingGallery : MonoSingleton<ShootingGallery>
 {
@@ -9,31 +10,64 @@ public class ShootingGallery : MonoSingleton<ShootingGallery>
 
     public Player player;
     public Camera boothCam;
+    public Gun boothGun;
     public GameObject shootingUI;
+
+    public bool playerInside = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        boothGun = GetComponentInChildren<Gun>();
         boothCam.gameObject.SetActive(false);
-        boothCam.enabled = false;
         shootingUI.SetActive(false);
+        playerInside = false;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        if((player = other.GetComponent<Player>()) != null)
+        if(Input.GetKeyDown(KeyCode.E) & !playerInside)
         {
-            player.gameObject.SetActive(false);
-            StartShootingGallery();
+            if((player = other.GetComponent<Player>()) != null)
+            {
+                StartShootingGallery();
+            }
+        }
+
+        else if(Input.GetKeyDown(KeyCode.E) & playerInside)
+        {
+            Debug.Log("HLLO");
+            EndShootingGallery();
         }
     }
 
     private void StartShootingGallery()
     {
+        playerInside = true;
+        player.DisableMovement();
+
         boothCam.gameObject.SetActive(true);
-        boothCam.enabled = true;
+
         Cursor.lockState = CursorLockMode.None;
         shootingUI.SetActive(true);
+
+        player.pistol.DisableGun();
+        boothGun.EnableGun();
+    }
+
+    private void EndShootingGallery()
+    {
+        playerInside = false;
+        player.EnableMovement();
+
+        boothCam.gameObject.SetActive(false);
+
+        Cursor.lockState = CursorLockMode.Locked;
+        shootingUI.SetActive(false);
+
+        player.gameObject.SetActive(true);
+        player.pistol.EnableGun();
+        boothGun.DisableGun();
     }
 
     // Update is called once per frame

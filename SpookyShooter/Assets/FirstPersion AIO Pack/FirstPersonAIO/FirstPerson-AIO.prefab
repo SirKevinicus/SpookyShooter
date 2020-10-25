@@ -254,10 +254,11 @@ MonoBehaviour:
   damage: 10
   range: 100
   fireRate: 0.4
+  isActiveGun: 0
   fpsCam: {fileID: 0}
   hitLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 55
   dmgDealtUIPrefab: {fileID: 25451943619227647, guid: cd53b461339ccda4b87d562acbfbf417,
     type: 3}
 --- !u!1 &1743903104223250
@@ -571,6 +572,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
+  pistol: {fileID: 1420373598223691587}
 --- !u!1001 &2135771474
 PrefabInstance:
   m_ObjectHideFlags: 0

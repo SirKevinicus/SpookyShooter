@@ -14,7 +14,7 @@ public class Pistol : Gun
         fpsCam = GetComponentInParent<Camera>();
     }
 
-    protected override void HandleShoot()
+    public override void HandleShoot()
     {
         // check if hit an enemy
         RaycastHit hit;
