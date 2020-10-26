@@ -6,7 +6,7 @@ public class ToyGun : Gun
 {
     public override void HandleShoot()
     {
-        Debug.Log("SHOT TOY GUN.");
+
     }
 
 }

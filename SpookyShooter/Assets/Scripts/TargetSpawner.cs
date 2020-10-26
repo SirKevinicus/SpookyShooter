@@ -6,27 +6,32 @@ public class TargetSpawner : MonoBehaviour
 {
     public Transform[] spawnPoints;
     public GameObject targetPrefab;
+    public ShootingGallery gallery;
 
     // Start is called before the first frame update
     void Start()
     {
-        Invoke("SpawnTargets", 2.0f);
+        gallery = GetComponentInParent<ShootingGallery>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SpawnTarget(int spawn)
     {
-        
+        if (spawn > spawnPoints.Length)
+        {
+            Debug.LogError("Spawn Location " + spawn + " Not Valid");
+            return;
+        }
+        Vector3 position = spawnPoints[spawn].localPosition;
+        int direction;
+        if (spawn % 2 == 0) direction = 1;
+        else direction = -1;
+
+        SpawnTarget(position, direction);
     }
 
-    void SpawnTargets()
+    void SpawnTarget(Vector3 position, int direction)
     {
-        SpawnTarget(spawnPoints[0].localPosition);
-    }
-
-    void SpawnTarget(Vector3 position)
-    {
-        Vector3 endPosition = position + (Vector3.right * ShootingGallery.instance.boothWidth);
+        Vector3 endPosition = position + (Vector3.right * gallery.boothWidth * direction);
 
         Target target = Instantiate(targetPrefab, transform).GetComponent<Target>();
         target.Initialize(position, endPosition);

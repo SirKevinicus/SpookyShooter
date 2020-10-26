@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
-public class ShootingGallery : MonoSingleton<ShootingGallery>
+public class ShootingGallery : MonoBehaviour
 {
     public float boothWidth;
-    public Transform cameraTarget;
+    public float waitTimeBeforeGameStarts = 2f;
 
+    public GalleryLevel level1;
+
+    // REFERENCES
     public Player player;
     public Camera boothCam;
     public Gun boothGun;
     public GameObject shootingUI;
+    private TargetSpawner spawner;
 
+    // BOOLS
     public bool playerInside = false;
     public bool playerInRange = false;
 
@@ -20,6 +25,8 @@ public class ShootingGallery : MonoSingleton<ShootingGallery>
     void Start()
     {
         boothGun = GetComponentInChildren<Gun>();
+        spawner = GetComponentInChildren<TargetSpawner>();
+
         boothCam.gameObject.SetActive(false);
         shootingUI.SetActive(false);
     }
@@ -48,7 +55,7 @@ public class ShootingGallery : MonoSingleton<ShootingGallery>
         {
             if(!playerInside)
             {
-                StartShootingGallery();
+                StartCoroutine(StartShootingGallery());
             }
             else
             {
@@ -57,18 +64,20 @@ public class ShootingGallery : MonoSingleton<ShootingGallery>
         }
     }
 
-    private void StartShootingGallery()
+    private IEnumerator StartShootingGallery()
     {
         playerInside = true;
         player.DisableMovement();
 
         boothCam.gameObject.SetActive(true);
-
         Cursor.lockState = CursorLockMode.None;
         shootingUI.SetActive(true);
 
         player.pistol.DisableGun();
         boothGun.EnableGun();
+
+        yield return new WaitForSeconds(waitTimeBeforeGameStarts);
+        level1.StartGame(spawner);
     }
 
     private void EndShootingGallery()

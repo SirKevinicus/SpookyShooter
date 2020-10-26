@@ -7,18 +7,35 @@ public class Target : MonoBehaviour
     private Vector3 startPosition;
     private Vector3 endPosition;
 
+    private Animator animator;
+    public AudioSource shotSFX;
+
     private float speed = 1f;
     private float startTime;
+
+    public int points = 1;
+
+    public float afterShotDelayTime = 0.2f;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        animator = GetComponent<Animator>();
     }
 
     public void GetShot()
     {
-        Debug.Log("SHOT ME!");
+        StartCoroutine(ShotActions());
+    }
+
+    private IEnumerator ShotActions()
+    {
+        yield return new WaitForSeconds(afterShotDelayTime);
+
+        ScoreManager.instance.AddToScore(points);
+        animator.SetTrigger("GetShot");
+        if (shotSFX != null) shotSFX.Play();
+        Destroy(gameObject, 2f);
     }
 
     public void Initialize(Vector3 startPosition, Vector3 endPosition)
