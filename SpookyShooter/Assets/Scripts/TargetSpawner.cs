@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public enum TargetTypes { zombie, pumpkin }
+public enum TargetTypes { zombie, pumpkin, bats }
 
 public class TargetSpawner : MonoSingleton<TargetSpawner>
 {
@@ -10,6 +10,7 @@ public class TargetSpawner : MonoSingleton<TargetSpawner>
 
     public GameObject zombie_prefab;
     public GameObject pumpkin_prefab;
+    public GameObject bats_prefab;
 
     public float afterShotDelayTime = 0.2f;
 
@@ -51,15 +52,20 @@ public class TargetSpawner : MonoSingleton<TargetSpawner>
             case TargetTypes.pumpkin:
                 prefab = pumpkin_prefab;
                 break;
+            case TargetTypes.bats:
+                prefab = bats_prefab;
+                break;
             default:
                 Debug.LogError("Target Type does not exist.");
                 prefab = null;
                 break;
         }
 
-        Target target = Instantiate(prefab, transform).GetComponent<Target>();
-        target.Initialize(position, endPosition);
-
-        onTargetSpawned?.Invoke(target);
+        Target[] targets = Instantiate(prefab, transform).GetComponentsInChildren<Target>();
+        foreach(Target t in targets)
+        {
+            t.Initialize(position, endPosition);
+            onTargetSpawned?.Invoke(t);
+        }
     }
 }

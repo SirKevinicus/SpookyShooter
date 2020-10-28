@@ -14,19 +14,20 @@ public class BackgroundMusic : MonoBehaviour
     {
         source = GetComponent<AudioSource>();
         source.clip = ambientSounds;
-        source.volume = 0.3f;
         source.Play();
     }
 
     public void PlayCircusMusic()
     {
         source.clip = circusMusic;
+        source.volume = 0.1f;
         source.Play();
     }
 
     public void PlayAmbient()
     {
         source.clip = ambientSounds;
+        source.volume = 0.3f;
         source.Play();
     }
 }

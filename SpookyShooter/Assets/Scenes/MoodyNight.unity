@@ -1590,7 +1590,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 7f13365226733004cb2ff4098a7c6ec9, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.3
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1736,8 +1736,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.5999756, y: 81.7}
-  m_SizeDelta: {x: 241.35059, y: 53.915245}
+  m_AnchoredPosition: {x: 3.7, y: 43.5}
+  m_SizeDelta: {x: 110.282166, y: 22.111847}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &435207691
 MonoBehaviour:
@@ -1786,7 +1786,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48.15
+  m_fontSize: 19.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2238,9 +2238,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boothWidth: 5
+  startingLevel: 1
   waitTimeBeforeLevelStarts: 2
   levels:
   - {fileID: 1711523322}
+  - {fileID: 2108647039}
   shootingUI: {fileID: 365460759}
   crosshairs: {fileID: 1380723430}
   levelText: {fileID: 55789729}
@@ -2687,7 +2689,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 757648380}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.0000063578}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1391695419}
@@ -2696,8 +2698,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -118}
-  m_SizeDelta: {x: 216.9823, y: 73.73047}
+  m_AnchoredPosition: {x: 0.000015259, y: -49.1}
+  m_SizeDelta: {x: 100.636505, y: 34.196228}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &757648382
 MonoBehaviour:
@@ -3182,6 +3184,8 @@ MonoBehaviour:
     type: 3}
   pumpkin_prefab: {fileID: 8484633946854540195, guid: 5cd0397201b7cfc4581901a383711627,
     type: 3}
+  bats_prefab: {fileID: 8484633946854540195, guid: e7084005f16e0954bbdfcafbc62e437b,
+    type: 3}
   afterShotDelayTime: 0.2
 --- !u!1 &941412535
 GameObject:
@@ -3266,7 +3270,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 623277692}
-        m_MethodName: StartNextLevel
+        m_MethodName: NextLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3867,6 +3871,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1711523323}
+  - {fileID: 2108647038}
   m_Father: {fileID: 623277693}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4559,7 +4564,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 65.85
+  m_fontSize: 30.55
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5158,8 +5163,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   beatLevelSound: {fileID: 0}
-  pointsToWin: 1
-  maxScore: 12
+  pointsToWin: 10
+  maxScore: 14
 --- !u!4 &1711523323
 Transform:
   m_ObjectHideFlags: 0
@@ -6053,8 +6058,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.5999756, y: -13.567993}
-  m_SizeDelta: {x: 205.16205, y: 27.1353}
+  m_AnchoredPosition: {x: -0.0000011921, y: 0.0000038146973}
+  m_SizeDelta: {x: 110.06558, y: 9.684082}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2003301907
 MonoBehaviour:
@@ -6103,11 +6108,11 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24.45
+  m_fontSize: 8.7
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 18
+  m_fontSizeMin: 1
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
@@ -6481,6 +6486,52 @@ Transform:
   m_Father: {fileID: 896166399}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2108647037
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2108647038}
+  - component: {fileID: 2108647039}
+  m_Layer: 0
+  m_Name: Level2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2108647038
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2108647037}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1168697785}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2108647039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2108647037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbdc5101c01e01243a26427563f14357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  beatLevelSound: {fileID: 0}
+  pointsToWin: 19
+  maxScore: 24
 --- !u!1 &2125400537
 GameObject:
   m_ObjectHideFlags: 0
@@ -6528,7 +6579,7 @@ PrefabInstance:
     - target: {fileID: 1343474929557982357, guid: 9f089289c9d606c4f8f42da4650e9380,
         type: 3}
       propertyPath: startAmmo
-      value: 6
+      value: 36
       objectReference: {fileID: 0}
     - target: {fileID: 1343474929557982357, guid: 9f089289c9d606c4f8f42da4650e9380,
         type: 3}

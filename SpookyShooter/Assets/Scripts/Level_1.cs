@@ -16,7 +16,7 @@ public class Level_1 : GalleryLevel
         spawner.SpawnTarget(5, TargetTypes.zombie);
 
         yield return new WaitForSeconds(1);
-        spawner.SpawnTarget(4, TargetTypes.zombie);
+        spawner.SpawnTarget(4, TargetTypes.bats);
 
         yield return new WaitForSeconds(1);
         spawner.SpawnTarget(4, TargetTypes.zombie);

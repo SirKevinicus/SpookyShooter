@@ -8,6 +8,7 @@ public class ShootingGallery : MonoBehaviour
 {
     [Header("Options")]
     public float boothWidth;
+    public int startingLevel;
     public float waitTimeBeforeLevelStarts = 2f;
 
     [Header("Levels")]
@@ -56,8 +57,8 @@ public class ShootingGallery : MonoBehaviour
         loseLevelUI.SetActive(false);
         winGameUI.SetActive(false);
 
-        currentLevelNum = 1;
-        levelText.text = "Level 1";
+        currentLevelNum = startingLevel;
+        levelText.text = "Level " + currentLevelNum;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -121,11 +122,13 @@ public class ShootingGallery : MonoBehaviour
         currentLevel.onLoseLevel += LoseLevel;
         levelText.text = "Level " + currentLevelNum;
         if (crosshairs != null) crosshairs.SetActive(true);
+        boothGun.canShoot = true;
     }
 
     public void RetryLevel()
     {
         scoreManager.ResetScore();
+        loseLevelUI.SetActive(false);
         StartLevel(currentLevelNum);
     }
 
@@ -133,6 +136,9 @@ public class ShootingGallery : MonoBehaviour
     {
         if(currentLevelNum < levels.Length)
             currentLevelNum++;
+
+        winLevelUI.SetActive(false);
+        shootingUI.SetActive(true);
 
         StartCoroutine(StartLevel(currentLevelNum));
     }
@@ -144,6 +150,7 @@ public class ShootingGallery : MonoBehaviour
         Cursor.visible = true;
 
         shootingUI.SetActive(false);
+        boothGun.canShoot = false;
 
         // If last level, then show winGame
         if (currentLevelNum == levels.Length)
@@ -166,6 +173,8 @@ public class ShootingGallery : MonoBehaviour
 
         loseLevelUI.SetActive(true);
         shootingUI.SetActive(false);
+
+        boothGun.canShoot = false;
 
         finalScoreText_lose.text = "" + scoreManager.score + "/" + levels[currentLevelNum - 1].maxScore + " TARGETS HIT";
     }
