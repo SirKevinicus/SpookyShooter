@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1356941415761828200}
   - component: {fileID: 1356941415761828205}
   - component: {fileID: 1356941415761828202}
+  - component: {fileID: 1343474929557982357}
   - component: {fileID: 1356941415761828203}
   m_Layer: 0
   m_Name: Scifi Gun
@@ -146,6 +147,24 @@ MonoBehaviour:
   range: 10
   fireRate: 0.6
   isActiveGun: 0
+  canShoot: 0
+  crosshair: {fileID: 0}
+--- !u!114 &1343474929557982357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1356941415761828201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d71ac2f96185214d84e7d16a01dc6bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxAmmo: 36
+  startAmmo: 12
+  currentAmmo: 0
+  hasAmmo: 1
 --- !u!95 &1356941415761828203
 Animator:
   serializedVersion: 3

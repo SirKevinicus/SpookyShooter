@@ -1,23 +1,42 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
 public class ShootingGallery : MonoBehaviour
 {
+    [Header("Options")]
     public float boothWidth;
-    public float waitTimeBeforeGameStarts = 2f;
+    public float waitTimeBeforeLevelStarts = 2f;
 
-    public GalleryLevel level1;
+    [Header("Levels")]
+    public GalleryLevel[] levels;
+
+    [Header("UI")]
+    public GameObject shootingUI;
+    public GameObject crosshairs;
+    public TextMeshProUGUI levelText;
+
+    public GameObject winLevelUI;
+    public TextMeshProUGUI finalScoreText_win;
+
+    public GameObject loseLevelUI;
+    public TextMeshProUGUI finalScoreText_lose;
+
+    public GameObject winGameUI;
+    public TextMeshProUGUI finalScoreText_game;
 
     // REFERENCES
-    public Player player;
-    public Camera boothCam;
-    public Gun boothGun;
-    public GameObject shootingUI;
+    private Player player;
+    private Camera boothCam;
+    private ScoreManager scoreManager;
+    private Gun boothGun;
     private TargetSpawner spawner;
 
-    // BOOLS
+    // STATE
+    private GalleryLevel currentLevel;
+    private int currentLevelNum;
     public bool playerInside = false;
     public bool playerInRange = false;
 
@@ -25,10 +44,20 @@ public class ShootingGallery : MonoBehaviour
     void Start()
     {
         boothGun = GetComponentInChildren<Gun>();
+        boothCam = GetComponentInChildren<Camera>();
+        player = FindObjectOfType<Player>();
+        scoreManager = ScoreManager.instance;
         spawner = GetComponentInChildren<TargetSpawner>();
 
         boothCam.gameObject.SetActive(false);
+
         shootingUI.SetActive(false);
+        winLevelUI.SetActive(false);
+        loseLevelUI.SetActive(false);
+        winGameUI.SetActive(false);
+
+        currentLevelNum = 1;
+        levelText.text = "Level 1";
     }
 
     private void OnTriggerEnter(Collider other)
@@ -55,7 +84,7 @@ public class ShootingGallery : MonoBehaviour
         {
             if(!playerInside)
             {
-                StartCoroutine(StartShootingGallery());
+                StartShootingGallery();
             }
             else
             {
@@ -64,7 +93,7 @@ public class ShootingGallery : MonoBehaviour
         }
     }
 
-    private IEnumerator StartShootingGallery()
+    private void StartShootingGallery()
     {
         playerInside = true;
         player.DisableMovement();
@@ -73,11 +102,72 @@ public class ShootingGallery : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         shootingUI.SetActive(true);
 
-        player.pistol.DisableGun();
-        boothGun.EnableGun();
+        player.UseGun(boothGun);
 
-        yield return new WaitForSeconds(waitTimeBeforeGameStarts);
-        level1.StartGame(spawner);
+        // AUDIO
+        BackgroundMusic music = FindObjectOfType<BackgroundMusic>();
+        if (music != null) music.PlayCircusMusic();
+
+        StartCoroutine(StartLevel(currentLevelNum));
+    }
+
+    public IEnumerator StartLevel(int levelNum)
+    {
+        yield return new WaitForSeconds(waitTimeBeforeLevelStarts);
+
+        currentLevel = levels[levelNum - 1];
+        currentLevel.StartLevel(spawner);
+        currentLevel.onBeatLevel += BeatLevel;
+        currentLevel.onLoseLevel += LoseLevel;
+        levelText.text = "Level " + currentLevelNum;
+        if (crosshairs != null) crosshairs.SetActive(true);
+    }
+
+    public void RetryLevel()
+    {
+        scoreManager.ResetScore();
+        StartLevel(currentLevelNum);
+    }
+
+    public void NextLevel()
+    {
+        if(currentLevelNum < levels.Length)
+            currentLevelNum++;
+
+        StartCoroutine(StartLevel(currentLevelNum));
+    }
+
+    public void BeatLevel()
+    {
+        if (crosshairs != null) crosshairs.SetActive(false);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        shootingUI.SetActive(false);
+
+        // If last level, then show winGame
+        if (currentLevelNum == levels.Length)
+        {
+            winGameUI.SetActive(true);
+            finalScoreText_game.text = "" + scoreManager.score + "/" + levels[currentLevelNum - 1].maxScore + " TARGETS HIT";
+        }
+        else
+        {
+            winLevelUI.SetActive(true);
+            finalScoreText_win.text = "" + scoreManager.score + "/" + levels[currentLevelNum - 1].maxScore + " TARGETS HIT";
+        }
+    }
+
+    public void LoseLevel()
+    {
+        if (crosshairs != null) crosshairs.SetActive(false);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        loseLevelUI.SetActive(true);
+        shootingUI.SetActive(false);
+
+        finalScoreText_lose.text = "" + scoreManager.score + "/" + levels[currentLevelNum - 1].maxScore + " TARGETS HIT";
     }
 
     private void EndShootingGallery()
@@ -86,12 +176,16 @@ public class ShootingGallery : MonoBehaviour
         player.EnableMovement();
 
         boothCam.gameObject.SetActive(false);
-
         Cursor.lockState = CursorLockMode.Locked;
         shootingUI.SetActive(false);
 
-        player.gameObject.SetActive(true);
-        player.pistol.EnableGun();
-        boothGun.DisableGun();
+        // AUDIO
+        BackgroundMusic music = FindObjectOfType<BackgroundMusic>();
+        if (music != null) music.PlayAmbient();
+
+        levels[currentLevelNum - 1].StopAllCoroutines();
+        ScoreManager.instance.ResetScore();
+
+        player.StopUsingGun();
     }
 }

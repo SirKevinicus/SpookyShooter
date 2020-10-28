@@ -2,55 +2,79 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Target : MonoBehaviour
+public abstract class Target : MonoBehaviour
 {
+    // Set by Target Spawner
     private Vector3 startPosition;
     private Vector3 endPosition;
+    private float startTime;
 
+    // Components
     private Animator animator;
     public AudioSource shotSFX;
 
-    private float speed = 1f;
-    private float startTime;
+    // Variables
+    protected float my_speed = 1f;
+    protected int my_points = 1;
 
-    public int points = 1;
+    // State
+    private bool hasBeenShot;
 
-    public float afterShotDelayTime = 0.2f;
+    public delegate void GotShot(Target t);
+    public event GotShot onGotShot;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        animator = GetComponent<Animator>();
-    }
-
-    public void GetShot()
-    {
-        StartCoroutine(ShotActions());
-    }
-
-    private IEnumerator ShotActions()
-    {
-        yield return new WaitForSeconds(afterShotDelayTime);
-
-        ScoreManager.instance.AddToScore(points);
-        animator.SetTrigger("GetShot");
-        if (shotSFX != null) shotSFX.Play();
-        Destroy(gameObject, 2f);
-    }
-
-    public void Initialize(Vector3 startPosition, Vector3 endPosition)
+    public virtual void Initialize(Vector3 startPosition, Vector3 endPosition)
     {
         this.startPosition = startPosition;
         transform.localPosition = startPosition;
         this.endPosition = endPosition;
 
+        animator = GetComponent<Animator>();
+
         startTime = Time.time;
+        hasBeenShot = false;
+
+    }
+
+    public void GetShot()
+    {
+        if(!hasBeenShot)
+            StartCoroutine(ShotActions());
+        hasBeenShot = true;
+    }
+
+    public void MadeToEnd()
+    {
+        animator.SetTrigger("GetShot");
+        Destroy(gameObject, 0.5f);
+    }
+
+    private IEnumerator ShotActions()
+    {
+        yield return new WaitForSeconds(TargetSpawner.instance.afterShotDelayTime);
+
+        animator.SetTrigger("GetShot");
+        if (shotSFX != null) shotSFX.Play();
+        onGotShot?.Invoke(this);
+        Destroy(gameObject, 2f);
+    }
+
+    public int GetPoints()
+    {
+        return my_points;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 newPos = Vector3.Lerp(startPosition, endPosition, (speed / 10f) * (Time.time - startTime));
+        Vector3 newPos = Vector3.Lerp(startPosition, endPosition, (my_speed / 10f) * (Time.time - startTime));
         transform.localPosition = newPos;
+
+        // Check if reached the end
+        float distance = Mathf.Abs((endPosition - transform.localPosition).x);
+        if(distance <= 0.01f)
+        {
+            MadeToEnd();
+        }
     }
 }

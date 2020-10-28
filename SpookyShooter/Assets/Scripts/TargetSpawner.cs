@@ -1,12 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+public enum TargetTypes { zombie, pumpkin }
 
-public class TargetSpawner : MonoBehaviour
+public class TargetSpawner : MonoSingleton<TargetSpawner>
 {
     public Transform[] spawnPoints;
-    public GameObject targetPrefab;
     public ShootingGallery gallery;
+
+    public GameObject zombie_prefab;
+    public GameObject pumpkin_prefab;
+
+    public float afterShotDelayTime = 0.2f;
+
+    public delegate void TargetSpawned(Target t);
+    public event TargetSpawned onTargetSpawned;
+
 
     // Start is called before the first frame update
     void Start()
@@ -14,7 +23,7 @@ public class TargetSpawner : MonoBehaviour
         gallery = GetComponentInParent<ShootingGallery>();
     }
 
-    public void SpawnTarget(int spawn)
+    public void SpawnTarget(int spawn, TargetTypes type)
     {
         if (spawn > spawnPoints.Length)
         {
@@ -26,14 +35,31 @@ public class TargetSpawner : MonoBehaviour
         if (spawn % 2 == 0) direction = 1;
         else direction = -1;
 
-        SpawnTarget(position, direction);
+        SpawnTarget(position, direction, type);
     }
 
-    void SpawnTarget(Vector3 position, int direction)
+    void SpawnTarget(Vector3 position, int direction, TargetTypes type)
     {
         Vector3 endPosition = position + (Vector3.right * gallery.boothWidth * direction);
+        GameObject prefab;
 
-        Target target = Instantiate(targetPrefab, transform).GetComponent<Target>();
+        switch(type)
+        {
+            case TargetTypes.zombie:
+                prefab = zombie_prefab;
+                break;
+            case TargetTypes.pumpkin:
+                prefab = pumpkin_prefab;
+                break;
+            default:
+                Debug.LogError("Target Type does not exist.");
+                prefab = null;
+                break;
+        }
+
+        Target target = Instantiate(prefab, transform).GetComponent<Target>();
         target.Initialize(position, endPosition);
+
+        onTargetSpawned?.Invoke(target);
     }
 }

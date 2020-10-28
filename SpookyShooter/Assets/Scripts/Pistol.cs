@@ -22,10 +22,8 @@ public class Pistol : Gun
         {
             Debug.Log("HIT");
 
-            Enemy enemy = hit.transform.GetComponent<Enemy>();
-            if (enemy == null) enemy = hit.transform.GetComponentInParent<Enemy>();
-
-            if (enemy != null)
+            Enemy enemy;
+            if ((enemy = hit.transform.GetComponentInParent<Enemy>()) != null)
             {
                 ShowDmgIndicator(hit);
             }
@@ -33,9 +31,14 @@ public class Pistol : Gun
             //Debug.Log(hit.transform.name);
         }
     }
+
     private void ShowDmgIndicator(RaycastHit hit)
     {
-        if (dmgDealtUIPrefab == null) return;
+        if (dmgDealtUIPrefab == null)
+        {
+            Debug.LogError("DMG DEALT UI PREFAB NOT ASSIGNED.");
+            return;
+        }
 
         Renderer hitRend = hit.transform.GetComponentInChildren<Renderer>();
         if (hitRend == null) hitRend = hit.transform.GetComponentInParent<Renderer>();
