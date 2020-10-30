@@ -132,11 +132,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4448068258976056}
+  - component: {fileID: 5984281674928842823}
   - component: {fileID: 82712217391461128}
   - component: {fileID: 54587624234064098}
   - component: {fileID: 136239539305442568}
   - component: {fileID: 114051214696948948}
-  - component: {fileID: 5984281674928842823}
   m_Layer: 8
   m_Name: FirstPerson-AIO
   m_TagString: Player
@@ -159,6 +159,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -180.00002, z: 0}
+--- !u!114 &5984281674928842823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743903104223250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2ef479fb36bde74082a38c1ef416cbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 0}
+  startingGun: {fileID: 138165131184468589, guid: 94ac71d03f813614090aaa7238b5bc80,
+    type: 3}
+  guns: []
+  gun: {fileID: 0}
+  hud: {fileID: 0}
+  gunName: {fileID: 0}
+  ammoText: {fileID: 0}
 --- !u!82 &82712217391461128
 AudioSource:
   m_ObjectHideFlags: 0
@@ -302,7 +322,7 @@ MonoBehaviour:
   mouseInputInversion: 0
   cameraInputMethod: 0
   verticalRotationRange: 156.2
-  mouseSensitivity: 3
+  mouseSensitivity: 1
   fOVToMouseSensitivity: 1
   cameraSmoothing: 3
   lockAndHideCursor: 1
@@ -421,20 +441,3 @@ MonoBehaviour:
     - {fileID: 8300000, guid: fef61cddf814a2c49bf7a6c33791c766, type: 3}
     - {fileID: 8300000, guid: 73f938638097f8042ad7842aa5b04ac5, type: 3}
     - {fileID: 8300000, guid: e06c6ae1948cafd45a952ab85ebe4fa7, type: 3}
---- !u!114 &5984281674928842823
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1743903104223250}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2ef479fb36bde74082a38c1ef416cbd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cam: {fileID: 0}
-  startingGun: {fileID: 0}
-  gun: {fileID: 0}
-  hud: {fileID: 0}
-  ammoText: {fileID: 0}

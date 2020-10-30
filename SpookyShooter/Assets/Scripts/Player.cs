@@ -31,6 +31,19 @@ public class Player : MonoBehaviour
         gun.onReload += UpdateGunInfo;
     }
 
+    public bool PickUpAmmo(AmmoTypes type, int num)
+    {
+        foreach(Gun g in guns)
+        {
+            if(g.GetAmmoType() == type)
+            {
+                g.ammo.AddAmmo(num);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void UpdateGunInfo()
     {
         gunName.text = "" + gun.name;
