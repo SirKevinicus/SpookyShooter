@@ -577,8 +577,8 @@ MonoBehaviour:
   maxClipAmmo: 6
   startAmmo: 36
   startClipAmmo: 6
-  clipAmmo: 0
-  currentAmmo: 0
+  clipAmmo: 6
+  currentAmmo: 36
   hasClipAmmo: 1
   hasAmmo: 1
 --- !u!114 &138165131184468589
@@ -596,19 +596,22 @@ MonoBehaviour:
   shootSound: {fileID: 8300000, guid: c1f63923be799dc4c9a740b6ffdca404, type: 3}
   emptySound: {fileID: 8300000, guid: 02ed96cad15f05549bc35951a748483a, type: 3}
   reloadSound: {fileID: 8300000, guid: daaaa2c4a56faf94c9ca666e9dc1c732, type: 3}
+  ammo: {fileID: 4512474656873550348}
+  dmgDealtUIPrefab: {fileID: 25451943619227647, guid: cd53b461339ccda4b87d562acbfbf417,
+    type: 3}
   damage: 10
   range: 100
   fireRate: 0.4
+  gunType: 0
+  ammoType: 1
   ammoPerShot: 1
   reloadTime: 2
-  isActiveGun: 0
-  canShoot: 0
+  isActiveGun: 1
+  canShoot: 1
   fpsCam: {fileID: 0}
   hitLayers:
     serializedVersion: 2
     m_Bits: 55
-  dmgDealtUIPrefab: {fileID: 25451943619227647, guid: cd53b461339ccda4b87d562acbfbf417,
-    type: 3}
 --- !u!95 &2640797976042177825
 Animator:
   serializedVersion: 3

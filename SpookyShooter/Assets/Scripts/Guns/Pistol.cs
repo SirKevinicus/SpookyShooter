@@ -7,9 +7,10 @@ public class Pistol : Gun
     public Camera fpsCam;
     public LayerMask hitLayers;
 
-    public override void Initialize()
+    public override void Initialize(AmmoHolder ammoHolder)
     {
-        base.Initialize();
+        base.Initialize(ammoHolder);
+        name = "Pistol";
         fpsCam = GetComponentInParent<Camera>();
     }
 

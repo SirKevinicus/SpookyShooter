@@ -143,9 +143,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd536089c68bc66499ec1870b30829b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shootSound: {fileID: 0}
+  emptySound: {fileID: 0}
+  reloadSound: {fileID: 0}
+  clip: {fileID: 0}
+  dmgDealtUIPrefab: {fileID: 0}
   damage: 10
   range: 10
-  fireRate: 0.6
+  fireRate: 0.5
+  gunType: 0
+  ammoType: 1
+  ammoPerShot: 1
+  reloadTime: 1
+  startAmmoHolderAmt: 24
+  maxAmmoHolderAmt: 24
   isActiveGun: 0
   canShoot: 0
   crosshair: {fileID: 0}
@@ -161,9 +172,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d71ac2f96185214d84e7d16a01dc6bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxAmmo: 36
-  startAmmo: 12
-  currentAmmo: 0
+  maxClipAmmo: 0
+  clipAmmo: 0
   hasAmmo: 1
 --- !u!95 &1356941415761828203
 Animator:

@@ -5,68 +5,153 @@ using TMPro;
 
 public class Player : MonoBehaviour
 {
+    // COMPONENTS
     FirstPersonAIO fpc;
     Rigidbody rb;
     public Camera cam;
+
+    // REFERNCES
+    public ToyGun scifiGun;
+
+    // GUNS
     public Gun startingGun;
+    public Gun equippedGun;
+
     public List<Gun> guns;
 
-    public Gun gun;
+    // AMMO HOLDERS
+    public List<AmmoHolder> ammoHolders = new List<AmmoHolder>();
+    public AmmoHolder toygunAmmoHolder;
 
     public GameObject hud;
     public TextMeshProUGUI gunName;
     public TextMeshProUGUI ammoText;
 
+    public delegate void OnAmmoUpdate();
+    public event OnAmmoUpdate onAmmoUpdate;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         fpc = GetComponent<FirstPersonAIO>();
         rb = GetComponent<Rigidbody>();
         cam = GetComponentInChildren<Camera>();
+        scifiGun = FindObjectOfType<ToyGun>();
 
-        gun = Instantiate(startingGun, cam.transform).GetComponent<Gun>();
-        guns.Add(gun);
-        gun.EnableGun();
-        gun.onShoot += UpdateGunInfo;
-        gun.onReload += UpdateGunInfo;
+        toygunAmmoHolder = new AmmoHolder(AmmoTypes.toy, scifiGun.maxAmmoHolderAmt, scifiGun.startAmmoHolderAmt);
+        ammoHolders.Add(toygunAmmoHolder);
+
+        if(startingGun) PickUpGun(startingGun);
+    }
+
+    private void Update()
+    {
+        if (Input.GetButtonDown("Fire1") & equippedGun.canShoot)
+        {
+            if (equippedGun.clip.hasAmmo)
+            {
+                StartCoroutine(equippedGun.Shoot());
+                onAmmoUpdate?.Invoke();
+            }
+            else
+            {
+                equippedGun.GunEmpty();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.R) & equippedGun.canShoot)
+        {
+            StartCoroutine(equippedGun.Reload());
+            onAmmoUpdate?.Invoke();
+        }
+    }
+
+    public bool PickUpGun(Gun newGun)
+    {
+        if(!guns.Contains(newGun))
+        {
+            AmmoTypes ammoType = newGun.GetAmmoType();
+            AmmoHolder thisGunsAmmo;
+
+            // If there is already a AmmoHolder for this gun's ammo type, use it
+            if(ammoHolders.Exists(x => x.ammoType == ammoType))
+            {
+                thisGunsAmmo = ammoHolders.Find(x => x.ammoType == ammoType);
+            }
+            // Otherwise, make a new AmmoHolder for this ammo type
+            else
+            {
+                thisGunsAmmo = new AmmoHolder(ammoType, newGun.startAmmoHolderAmt, newGun.maxAmmoHolderAmt);
+            }
+
+
+            Gun gun = Instantiate(newGun, cam.transform).GetComponent<Gun>();
+            gun.Initialize(thisGunsAmmo);
+
+            guns.Add(gun);
+            equippedGun = gun;
+            gun.EnableGun();
+
+            gun.onShoot += UpdateGunInfo;
+            gun.onReload += UpdateGunInfo;
+            UpdateGunInfo();
+
+            return true;
+        }
+        return false;
     }
 
     public bool PickUpAmmo(AmmoTypes type, int num)
     {
-        foreach(Gun g in guns)
+        foreach(AmmoHolder holder in ammoHolders)
         {
-            if(g.GetAmmoType() == type)
+            if(holder.ammoType == type)
             {
-                g.ammo.AddAmmo(num);
-                return true;
+                // If Gun accepts the ammo
+                if (holder.AddAmmo(num))
+                {
+                    Debug.Log("Adding ammo to " + holder.ammoType + " holder" + holder.currentCapacity);
+                    UpdateGunInfo();
+                    onAmmoUpdate?.Invoke();
+
+                    return true;
+                }
             }
         }
+
+        onAmmoUpdate?.Invoke();
+
         return false;
     }
 
     public void UpdateGunInfo()
     {
-        gunName.text = "" + gun.name;
-        ammoText.text = "" + gun.GetCurrentAmmo() + "/" + gun.GetTotalAmmo();
+        gunName.text = "<bounce>" + equippedGun.name + "</bounce>";
+        ammoText.text = "" + equippedGun.GetClipAmmo() + "/" + equippedGun.GetHolderAmmo();
     }
 
     // Use a Gun not equipped to the player
     public void UseGun(Gun newGun)
     {
-        gun.DisableGun();
-        gun = newGun;
-        gun.EnableGun();
-        gun.onShoot += UpdateGunInfo;
-        gun.onReload += UpdateGunInfo;
+        equippedGun.DisableGun();
+        equippedGun = newGun;
+        equippedGun.EnableGun();
+
+        if(!guns.Contains(newGun))
+        {
+            guns.Add(newGun);
+            equippedGun.onShoot += UpdateGunInfo;
+            equippedGun.onReload += UpdateGunInfo;
+        }
 
         UpdateGunInfo();
     }
 
     public void StopUsingGun()
     {
-        gun.DisableGun();
-        gun = guns[0];
-        gun.EnableGun();
+        equippedGun.DisableGun();
+        equippedGun = guns[0];
+        equippedGun.EnableGun();
         UpdateGunInfo();
         //gun.onShoot += UpdateGunInfo;
         //gun.onReload += UpdateGunInfo;

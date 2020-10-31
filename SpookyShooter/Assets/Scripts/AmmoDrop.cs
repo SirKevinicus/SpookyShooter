@@ -5,7 +5,15 @@ using UnityEngine;
 public class AmmoDrop : MonoBehaviour
 {
     public AmmoTypes type;
+    private AudioSource audioSource;
+    public AudioClip pickupSound;
     public int num;
+
+    private void Start()
+    {
+        audioSource = gameObject.AddComponent(typeof(AudioSource)) as AudioSource;
+        audioSource.clip = pickupSound;
+    }
 
     public void Initialize(AmmoTypes type, int num)
     {
@@ -21,7 +29,8 @@ public class AmmoDrop : MonoBehaviour
             bool pickedUp = player.PickUpAmmo(type, num);
             if(pickedUp)
             {
-                Destroy(gameObject);
+                audioSource.Play();
+                Destroy(gameObject, 1f);
             }
         }
     }

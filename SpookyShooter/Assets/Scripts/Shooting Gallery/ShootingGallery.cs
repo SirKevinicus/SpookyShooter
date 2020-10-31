@@ -29,24 +29,38 @@ public class ShootingGallery : MonoBehaviour
     public TextMeshProUGUI finalScoreText_game;
 
     // REFERENCES
-    private Player player;
+    public Player player;
     private Camera boothCam;
     private ScoreManager scoreManager;
-    private Gun boothGun;
+    public Gun boothGun;
     private TargetSpawner spawner;
 
     // STATE
+    [Header("State")]
     private GalleryLevel currentLevel;
-    private int currentLevelNum;
+    public int currentLevelNum;
     public bool playerInside = false;
     public bool playerInRange = false;
 
+    // EVENTS
+    public delegate void OnBeatLevel();
+    public event OnBeatLevel onBeatLevel;
+
+    public delegate void OnStartGallery();
+    public event OnStartGallery onStartGallery;
+
+    public delegate void OnEndGallery();
+    public event OnEndGallery onEndGallery;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        boothGun = GetComponentInChildren<Gun>();
-        boothCam = GetComponentInChildren<Camera>();
         player = FindObjectOfType<Player>();
+
+        boothGun = GetComponentInChildren<Gun>();
+        boothGun.Initialize(player.toygunAmmoHolder);
+
+        boothCam = GetComponentInChildren<Camera>();
         scoreManager = ScoreManager.instance;
         spawner = GetComponentInChildren<TargetSpawner>();
 
@@ -63,15 +77,16 @@ public class ShootingGallery : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if ((player = other.GetComponent<Player>()) != null)
+        if (other.GetComponent<Player>() != null)
         {
+            player = other.GetComponent<Player>();
             playerInRange = true;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if((player = other.GetComponent<Player>()) != null)
+        if(other.GetComponent<Player>() != null)
         {
             player = null;
             playerInRange = false;
@@ -94,12 +109,14 @@ public class ShootingGallery : MonoBehaviour
         }
     }
 
-    private void StartShootingGallery()
+    public void StartShootingGallery()
     {
         playerInside = true;
         player.DisableMovement();
 
         boothCam.gameObject.SetActive(true);
+
+        // UI
         Cursor.lockState = CursorLockMode.None;
         shootingUI.SetActive(true);
 
@@ -110,6 +127,8 @@ public class ShootingGallery : MonoBehaviour
         if (music != null) music.PlayCircusMusic();
 
         StartCoroutine(StartLevel(currentLevelNum));
+
+        onStartGallery?.Invoke();
     }
 
     public IEnumerator StartLevel(int levelNum)
@@ -168,6 +187,8 @@ public class ShootingGallery : MonoBehaviour
             beatLevelUI.SetActive(true);
             finalScoreText_win.text = "" + scoreManager.score + "/" + levels[currentLevelNum - 1].maxScore + " TARGETS HIT";
         }
+
+        onBeatLevel?.Invoke();
     }
 
     public void LoseLevel()
@@ -184,14 +205,17 @@ public class ShootingGallery : MonoBehaviour
         finalScoreText_lose.text = "" + scoreManager.score + "/" + levels[currentLevelNum - 1].maxScore + " TARGETS HIT";
     }
 
-    private void EndShootingGallery()
+    public void EndShootingGallery()
     {
         playerInside = false;
         player.EnableMovement();
 
         boothCam.gameObject.SetActive(false);
+
+        // UI
         Cursor.lockState = CursorLockMode.Locked;
         shootingUI.SetActive(false);
+        beatLevelUI.SetActive(false);
 
         // AUDIO
         BackgroundMusic music = FindObjectOfType<BackgroundMusic>();
@@ -201,5 +225,7 @@ public class ShootingGallery : MonoBehaviour
         ScoreManager.instance.ResetScore();
 
         player.StopUsingGun();
+
+        onEndGallery?.Invoke();
     }
 }

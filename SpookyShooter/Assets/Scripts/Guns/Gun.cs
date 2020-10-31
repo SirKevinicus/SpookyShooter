@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum GunTypes { pistol, scifi }
+
 [RequireComponent(typeof(AudioSource))]
-[RequireComponent(typeof(Ammo))]
+[RequireComponent(typeof(GunClip))]
 public abstract class Gun : MonoBehaviour
 {
     // COMPONENTS
@@ -11,18 +13,22 @@ public abstract class Gun : MonoBehaviour
     public AudioClip shootSound;
     public AudioClip emptySound;
     public AudioClip reloadSound;
-    public Ammo ammo;
+    public GunClip clip;
     private AudioSource audioSource;
 
     // REFERENCES
+    public AmmoHolder ammoHolder;
     public GameObject dmgDealtUIPrefab;
 
     public int damage = 10;
     public float range = 100f;
     public float fireRate = 0.4f;
+    public GunTypes gunType = GunTypes.pistol;
     public AmmoTypes ammoType = AmmoTypes.pistol;
     public int ammoPerShot = 1;
     public float reloadTime = 1f;
+    public int startAmmoHolderAmt = 36;
+    public int maxAmmoHolderAmt = 36;
 
     public bool isActiveGun = false;
     public bool canShoot;
@@ -33,85 +39,60 @@ public abstract class Gun : MonoBehaviour
     public delegate void OnReload();
     public event OnReload onReload;
 
-    private void Start()
-    {
-        Initialize();
-    }
-
-    public virtual void Initialize()
+    public virtual void Initialize(AmmoHolder ammoHolder)
     {
         audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
-        ammo = GetComponent<Ammo>();
+        this.ammoHolder = ammoHolder;
+
+        clip = GetComponent<GunClip>();
+        clip.Initialize(ammoHolder);
 
         canShoot = true;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(isActiveGun)
-        {
-            if (Input.GetButtonDown("Fire1") & canShoot)
-            {
-                if (ammo.hasClipAmmo)
-                {
-                    Shoot();
-                }
-                else
-                {
-                    GunEmpty();
-                }
-            }
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                StartCoroutine(Reload());
-            }
-        }
     }
 
     public IEnumerator Reload()
     {
-        if(!ammo.hasAmmo)
+        canShoot = false;
+
+        if (!clip.hasAmmo & !ammoHolder.hasAmmo)
         {
             GunEmpty();
             yield break;
         }
-        if (reloadSound != null)
-        {
-            audioSource.clip = reloadSound;
-            audioSource.Play();
-        }
 
-        canShoot = false;
+        PlayReloadSFX();
 
         yield return new WaitForSeconds(reloadTime);
 
-        canShoot = true;
-        ammo.Reload();
+        clip.Reload();
+
         onReload?.Invoke();
+
+        canShoot = true;
     }
 
-    void Shoot()
+    public IEnumerator Shoot()
     {
+        canShoot = false;
+
         ShootSFX(); // play gunshot
 
         // subtract ammo
-        ammo.SubtractAmmo(ammoPerShot);
+        clip.SubtractAmmo(ammoPerShot);
 
         // play shoot animation
         animator.SetTrigger("Shoot");
 
-        // trigger cooldown
-        StartCoroutine(ShootCooldown()); 
-
         HandleShoot();
 
         onShoot?.Invoke();
+
+        yield return new WaitForSeconds(fireRate);
+        canShoot = true;
     }
 
-    protected void GunEmpty()
+    public void GunEmpty()
     {
         if (emptySound != null) audioSource.clip = emptySound;
         audioSource.Play();
@@ -129,11 +110,11 @@ public abstract class Gun : MonoBehaviour
 
     public abstract void HandleShoot();
 
-    private IEnumerator ShootCooldown()
+    public void PlayReloadSFX()
     {
-        canShoot = false;
-        yield return new WaitForSeconds(fireRate);
-        canShoot = true;
+        if (reloadSound)
+            audioSource.clip = reloadSound;
+        audioSource.Play();
     }
 
     private void ShootSFX()
@@ -144,14 +125,19 @@ public abstract class Gun : MonoBehaviour
         audioSource.Play();
     }
 
-    public int GetCurrentAmmo()
+    public int GetClipAmmo()
     {
-        return ammo.clipAmmo;
+        return clip.clipAmmo;
+    }
+
+    public int GetHolderAmmo()
+    {
+        return ammoHolder.currentCapacity;
     }
 
     public int GetTotalAmmo()
     {
-        return ammo.currentAmmo;
+        return ammoHolder.currentCapacity + clip.clipAmmo;
     }
 
     public AmmoTypes GetAmmoType()
