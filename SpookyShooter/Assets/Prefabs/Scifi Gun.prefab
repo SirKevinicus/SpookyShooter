@@ -47,7 +47,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: f54a4c08c84fd0c44b95c2dd76bf1e75, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.7
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -143,19 +143,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd536089c68bc66499ec1870b30829b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootSound: {fileID: 0}
-  emptySound: {fileID: 0}
-  reloadSound: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: f54a4c08c84fd0c44b95c2dd76bf1e75, type: 3}
+  emptySound: {fileID: 8300000, guid: 47d00be4a1d098c49a59ba0251f7c56d, type: 3}
+  reloadSound: {fileID: 8300000, guid: b0cc922cc47ba454bb2468bd57deed37, type: 3}
   clip: {fileID: 0}
+  gunEnd: {fileID: 0}
   dmgDealtUIPrefab: {fileID: 0}
   damage: 10
   range: 10
   fireRate: 0.5
-  gunType: 0
-  ammoType: 1
+  gunType: 1
+  ammoType: 0
   ammoPerShot: 1
   reloadTime: 1
-  startAmmoHolderAmt: 24
+  startAmmoHolderAmt: 12
   maxAmmoHolderAmt: 24
   isActiveGun: 0
   canShoot: 0
@@ -172,9 +173,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d71ac2f96185214d84e7d16a01dc6bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxClipAmmo: 0
+  maxClipAmmo: 6
   clipAmmo: 0
   hasAmmo: 1
+  isFull: 1
 --- !u!95 &1356941415761828203
 Animator:
   serializedVersion: 3

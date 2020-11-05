@@ -23,5 +23,10 @@ public class ZombieIdle : EntityState
     {
         if (zombie.detectedPlayer)
             zombie.ChangeState(new ZombieWalk(zombie, zombie.player));
+
+        if (zombie.isDead)
+        {
+            zombie.ChangeState(new ZombieDead(zombie));
+        }
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class Target : MonoBehaviour
 {
     // Set by Target Spawner
+    private TargetSpawner spawner;
     private Vector3 startPosition;
     private Vector3 endPosition;
     private float startTime;
@@ -23,8 +24,9 @@ public abstract class Target : MonoBehaviour
     public delegate void GotShot(Target t);
     public event GotShot onGotShot;
 
-    public virtual void Initialize(Vector3 startPosition, Vector3 endPosition)
+    public virtual void Initialize(TargetSpawner spawner, Vector3 startPosition, Vector3 endPosition)
     {
+        this.spawner = spawner;
         this.startPosition = startPosition;
         transform.localPosition = startPosition;
         this.endPosition = endPosition;
@@ -51,7 +53,7 @@ public abstract class Target : MonoBehaviour
 
     private IEnumerator ShotActions()
     {
-        yield return new WaitForSeconds(TargetSpawner.instance.afterShotDelayTime);
+        yield return new WaitForSeconds(spawner.afterShotDelayTime);
 
         animator.SetTrigger("GetShot");
         if (shotSFX != null) shotSFX.Play();

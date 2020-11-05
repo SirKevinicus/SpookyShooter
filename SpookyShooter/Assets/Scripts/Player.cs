@@ -18,14 +18,13 @@ public class Player : MonoBehaviour
     public Gun equippedGun;
 
     public List<Gun> guns;
-
-    // AMMO HOLDERS
     public List<AmmoHolder> ammoHolders = new List<AmmoHolder>();
-    public AmmoHolder toygunAmmoHolder;
 
+    // UI
     public GameObject hud;
     public TextMeshProUGUI gunName;
     public TextMeshProUGUI ammoText;
+    public GameObject reloadHUD;
 
     public delegate void OnAmmoUpdate();
     public event OnAmmoUpdate onAmmoUpdate;
@@ -38,10 +37,10 @@ public class Player : MonoBehaviour
         cam = GetComponentInChildren<Camera>();
         scifiGun = FindObjectOfType<ToyGun>();
 
-        toygunAmmoHolder = new AmmoHolder(AmmoTypes.toy, scifiGun.maxAmmoHolderAmt, scifiGun.startAmmoHolderAmt);
-        ammoHolders.Add(toygunAmmoHolder);
-
         if(startingGun) PickUpGun(startingGun);
+
+        reloadHUD.SetActive(false);
+
     }
 
     private void Update()
@@ -59,10 +58,19 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.R) & equippedGun.canShoot)
+        if (Input.GetKeyDown(KeyCode.R))
         {
             StartCoroutine(equippedGun.Reload());
             onAmmoUpdate?.Invoke();
+        }
+
+        if(!equippedGun.clip.hasAmmo)
+        {
+            reloadHUD.SetActive(true);
+        } 
+        else
+        {
+            reloadHUD.SetActive(false);
         }
     }
 
@@ -82,8 +90,8 @@ public class Player : MonoBehaviour
             else
             {
                 thisGunsAmmo = new AmmoHolder(ammoType, newGun.startAmmoHolderAmt, newGun.maxAmmoHolderAmt);
+                ammoHolders.Add(thisGunsAmmo);
             }
-
 
             Gun gun = Instantiate(newGun, cam.transform).GetComponent<Gun>();
             gun.Initialize(thisGunsAmmo);
@@ -103,25 +111,44 @@ public class Player : MonoBehaviour
 
     public bool PickUpAmmo(AmmoTypes type, int num)
     {
-        foreach(AmmoHolder holder in ammoHolders)
-        {
-            if(holder.ammoType == type)
-            {
-                // If Gun accepts the ammo
-                if (holder.AddAmmo(num))
-                {
-                    Debug.Log("Adding ammo to " + holder.ammoType + " holder" + holder.currentCapacity);
-                    UpdateGunInfo();
-                    onAmmoUpdate?.Invoke();
+        //Debug.Log("Picked up " + num + " " + type + " ammo.");
+        bool acceptedAmmo = false;
 
-                    return true;
+        // Add ammo to the clips in the guns first
+        foreach(Gun gun in guns)
+        {
+            if(gun.ammoType == type)
+            {
+                int ammoAdded = gun.clip.AddAmmo(num);
+                {
+                    if (ammoAdded > 0)
+                    {
+                        //Debug.Log("Added " + ammoAdded + " ammo to " + gun.name);
+                        num -= ammoAdded;
+                        acceptedAmmo = true;
+                    }
                 }
             }
         }
 
+        // Then add ammo to the AmmoHolders
+        foreach(AmmoHolder holder in ammoHolders)
+        {
+            if (holder.ammoType == type)
+            {
+                // If Holder accepts the ammo
+                if (holder.AddAmmo(num))
+                {
+                    //Debug.Log("Added " + num + " ammo to " + holder.ammoType + " holder");
+                    acceptedAmmo = true;
+                }
+            }
+        }
+
+        UpdateGunInfo();
         onAmmoUpdate?.Invoke();
 
-        return false;
+        return acceptedAmmo;
     }
 
     public void UpdateGunInfo()
@@ -145,6 +172,16 @@ public class Player : MonoBehaviour
         }
 
         UpdateGunInfo();
+    }
+
+    public void PickUpAmmoHolder(AmmoHolder holder)
+    {
+        // If the player doesn't already have a holder of this type
+        if (!ammoHolders.Exists(x => x.ammoType == holder.ammoType))
+        {
+            // add it to the player's holders
+            ammoHolders.Add(holder);
+        }
     }
 
     public void StopUsingGun()

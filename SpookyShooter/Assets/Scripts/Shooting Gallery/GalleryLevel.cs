@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class GalleryLevel : MonoBehaviour
 {
     protected TargetSpawner spawner;
+    protected ScoreManager scoreManager;
 
     public AudioClip beatLevelSound;
 
@@ -20,13 +21,14 @@ public abstract class GalleryLevel : MonoBehaviour
     public virtual void StartLevel(TargetSpawner s)
     {
         spawner = s;
+        scoreManager = FindObjectOfType<ScoreManager>();
 
         StartCoroutine(LevelScript());
     }
 
     public virtual void EndLevel()
     {
-        if (ScoreManager.instance.score >= pointsToWin)
+        if (scoreManager.score >= pointsToWin)
         {
             Debug.LogError("YOU BEAT LEVEL");
             onBeatLevel?.Invoke();

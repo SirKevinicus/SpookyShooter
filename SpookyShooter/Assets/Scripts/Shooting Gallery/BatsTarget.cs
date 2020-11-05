@@ -7,9 +7,9 @@ public class BatsTarget : Target
     public float speed;
     public int points;
 
-    public override void Initialize(Vector3 startPosition, Vector3 endPosition)
+    public override void Initialize(TargetSpawner spawner, Vector3 startPosition, Vector3 endPosition)
     {
-        base.Initialize(startPosition, endPosition);
+        base.Initialize(spawner, startPosition, endPosition);
         my_speed = speed;
         my_points = points;
     }

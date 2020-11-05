@@ -28,19 +28,23 @@ public class ShootingGallery : MonoBehaviour
     public GameObject winGameUI;
     public TextMeshProUGUI finalScoreText_game;
 
+    public GameObject interactUI;
+
     // REFERENCES
     public Player player;
     private Camera boothCam;
     private ScoreManager scoreManager;
-    public Gun boothGun;
+    public Gun scifiGun;
     private TargetSpawner spawner;
 
     // STATE
     [Header("State")]
     private GalleryLevel currentLevel;
     public int currentLevelNum;
+    private bool beatLevel = false;
     public bool playerInside = false;
     public bool playerInRange = false;
+    public int startingAmmo;
 
     // EVENTS
     public delegate void OnBeatLevel();
@@ -57,22 +61,27 @@ public class ShootingGallery : MonoBehaviour
     {
         player = FindObjectOfType<Player>();
 
-        boothGun = GetComponentInChildren<Gun>();
-        boothGun.Initialize(player.toygunAmmoHolder);
+        // GUN
+        scifiGun = GetComponentInChildren<Gun>();
+        AmmoHolder scifiAmmoHolder = new AmmoHolder(AmmoTypes.scifi, scifiGun.maxAmmoHolderAmt, scifiGun.startAmmoHolderAmt);
+        scifiGun.Initialize(scifiAmmoHolder);
+        player.PickUpAmmoHolder(scifiAmmoHolder);
 
         boothCam = GetComponentInChildren<Camera>();
-        scoreManager = ScoreManager.instance;
+        boothCam.gameObject.SetActive(false);
+
+        scoreManager = FindObjectOfType<ScoreManager>();
         spawner = GetComponentInChildren<TargetSpawner>();
 
-        boothCam.gameObject.SetActive(false);
 
         shootingUI.SetActive(false);
         beatLevelUI.SetActive(false);
         loseLevelUI.SetActive(false);
         winGameUI.SetActive(false);
+        interactUI.SetActive(false);
 
         currentLevelNum = startingLevel;
-        levelText.text = "Level " + currentLevelNum;
+        LoadLevel();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -81,6 +90,7 @@ public class ShootingGallery : MonoBehaviour
         {
             player = other.GetComponent<Player>();
             playerInRange = true;
+            interactUI.SetActive(true);
         }
     }
 
@@ -90,6 +100,7 @@ public class ShootingGallery : MonoBehaviour
         {
             player = null;
             playerInRange = false;
+            interactUI.SetActive(false);
         }
     }
 
@@ -98,14 +109,10 @@ public class ShootingGallery : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.E) & playerInRange)
         {
-            if(!playerInside)
-            {
+            if (!playerInside)
                 StartShootingGallery();
-            }
             else
-            {
                 EndShootingGallery();
-            }
         }
     }
 
@@ -119,76 +126,92 @@ public class ShootingGallery : MonoBehaviour
         // UI
         Cursor.lockState = CursorLockMode.None;
         shootingUI.SetActive(true);
+        interactUI.SetActive(false);
 
-        player.UseGun(boothGun);
+        player.UseGun(scifiGun);
 
         // AUDIO
         BackgroundMusic music = FindObjectOfType<BackgroundMusic>();
         if (music != null) music.PlayCircusMusic();
 
-        StartCoroutine(StartLevel(currentLevelNum));
+        StartCoroutine(StartLevel());
 
         onStartGallery?.Invoke();
     }
 
-    public IEnumerator StartLevel(int levelNum)
+    private void NextLevel()
     {
-        if (crosshairs != null) crosshairs.SetActive(true);
-        Cursor.visible = false;
+        if(currentLevelNum < levels.Length) currentLevelNum++;
+        LoadLevel();
+    }
 
-        currentLevel = levels[levelNum - 1];
+    private void LoadLevel()
+    {
+        currentLevel = levels[currentLevelNum - 1];
         currentLevel.onBeatLevel += BeatLevel;
         currentLevel.onLoseLevel += LoseLevel;
         levelText.text = "Level " + currentLevelNum;
+    }
+
+    public IEnumerator StartLevel()
+    {
+        // TARGETS
+        spawner.DeleteTargets();
+
+        // UI
+        if (crosshairs != null) crosshairs.SetActive(true);
+        Cursor.visible = false;
+        shootingUI.SetActive(true);
+
+        startingAmmo = scifiGun.GetTotalAmmo();
 
         scoreManager.ResetScore();
+        beatLevel = false;
+
 
         yield return new WaitForSeconds(waitTimeBeforeLevelStarts);
 
         currentLevel.StartLevel(spawner);
-        boothGun.canShoot = true;
+        scifiGun.canShoot = true;
     }
 
     public void RetryLevel()
     {
         scoreManager.ResetScore();
         loseLevelUI.SetActive(false);
-        StartLevel(currentLevelNum);
-    }
 
-    public void NextLevel()
-    {
-        if(currentLevelNum < levels.Length)
-            currentLevelNum++;
+        scifiGun.SetAmmo(startingAmmo);
+        player.UpdateGunInfo();
 
-        beatLevelUI.SetActive(false);
-        shootingUI.SetActive(true);
-
-        StartCoroutine(StartLevel(currentLevelNum));
+        StartCoroutine(StartLevel());
     }
 
     public void BeatLevel()
     {
+        beatLevel = true;
+        onBeatLevel?.Invoke();
+
         if (crosshairs != null) crosshairs.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
         shootingUI.SetActive(false);
-        boothGun.canShoot = false;
+        startingAmmo = 0; // spend the ammo if you win the game
+        scifiGun.canShoot = false;
 
         // If last level, then show winGame
         if (currentLevelNum == levels.Length)
         {
             winGameUI.SetActive(true);
-            finalScoreText_game.text = "" + scoreManager.score + "/" + levels[currentLevelNum - 1].maxScore + " TARGETS HIT";
+            finalScoreText_game.text = "" + scoreManager.score + "/" + levels[currentLevelNum - 1].maxScore + " POINTS";
         }
         else
         {
             beatLevelUI.SetActive(true);
-            finalScoreText_win.text = "" + scoreManager.score + "/" + levels[currentLevelNum - 1].maxScore + " TARGETS HIT";
+            finalScoreText_win.text = "" + scoreManager.score + "/" + levels[currentLevelNum - 1].maxScore + " POINTS";
         }
 
-        onBeatLevel?.Invoke();
+        NextLevel();
     }
 
     public void LoseLevel()
@@ -200,7 +223,7 @@ public class ShootingGallery : MonoBehaviour
         loseLevelUI.SetActive(true);
         shootingUI.SetActive(false);
 
-        boothGun.canShoot = false;
+        scifiGun.canShoot = false;
 
         finalScoreText_lose.text = "" + scoreManager.score + "/" + levels[currentLevelNum - 1].maxScore + " TARGETS HIT";
     }
@@ -210,19 +233,21 @@ public class ShootingGallery : MonoBehaviour
         playerInside = false;
         player.EnableMovement();
 
+        if (!beatLevel) scifiGun.SetAmmo(startingAmmo);
         boothCam.gameObject.SetActive(false);
 
         // UI
         Cursor.lockState = CursorLockMode.Locked;
         shootingUI.SetActive(false);
         beatLevelUI.SetActive(false);
+        interactUI.SetActive(true);
 
         // AUDIO
         BackgroundMusic music = FindObjectOfType<BackgroundMusic>();
         if (music != null) music.PlayAmbient();
 
         levels[currentLevelNum - 1].StopAllCoroutines();
-        ScoreManager.instance.ResetScore();
+        scoreManager.ResetScore();
 
         player.StopUsingGun();
 

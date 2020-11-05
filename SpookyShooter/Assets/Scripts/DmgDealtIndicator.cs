@@ -17,8 +17,8 @@ public class DmgDealtIndicator : MonoBehaviour
         transform.parent = target.transform;
 
         Renderer hitRend = hit.transform.GetComponentInChildren<Renderer>();
-        if (hitRend == null) hitRend = hit.transform.GetComponentInParent<Renderer>();
-
+        if (!hitRend) hitRend = hit.transform.GetComponentInParent<Renderer>();
+        if (!hitRend) return;
         // Get the top of the renderer
         hitTopBound = hitRend.bounds.extents.y;
 

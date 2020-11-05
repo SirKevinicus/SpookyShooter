@@ -41,6 +41,11 @@ public class ZombieWalk : EntityState
         }
 
         zombie.WalkTowardsPlayer();
+
+        if (zombie.isDead)
+        {
+            zombie.ChangeState(new ZombieDead(zombie));
+        }
     }
 
     private void WaitThenGiveUp()

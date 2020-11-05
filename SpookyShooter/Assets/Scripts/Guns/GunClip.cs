@@ -10,6 +10,7 @@ public class GunClip : MonoBehaviour
     public int clipAmmo;
 
     public bool hasAmmo = true;
+    public bool isFull = true;
 
     public delegate void OnAmmoUpdate();
     public event OnAmmoUpdate onAmmoUpdate;
@@ -33,21 +34,21 @@ public class GunClip : MonoBehaviour
         onAmmoUpdate?.Invoke();
     }
 
-    public bool AddAmmo(int a)
+    public int AddAmmo(int a)
     {
-        bool addedAmmo = false;
+        int addedAmmo = 0;
         int ammoLeft = a;
 
-        while(clipAmmo < maxClipAmmo & ammoLeft > 0)
+        while (clipAmmo < maxClipAmmo & ammoLeft > 0)
         {
             clipAmmo++;
             ammoLeft--;
-            addedAmmo = true;
+            addedAmmo++;
         }
 
         if (clipAmmo > 0) hasAmmo = true;
+        if (clipAmmo == maxClipAmmo) isFull = true;
         onAmmoUpdate?.Invoke();
-
         return addedAmmo;
     }
 
@@ -63,6 +64,7 @@ public class GunClip : MonoBehaviour
         }
 
         if (clipAmmo == 0) hasAmmo = false;
+        if (clipAmmo < maxClipAmmo) isFull = false;
         onAmmoUpdate?.Invoke();
     }
 }

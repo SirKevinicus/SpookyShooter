@@ -14,6 +14,7 @@ public abstract class Gun : MonoBehaviour
     public AudioClip emptySound;
     public AudioClip reloadSound;
     public GunClip clip;
+    public Transform gunEnd;
     private AudioSource audioSource;
 
     // REFERENCES
@@ -30,6 +31,7 @@ public abstract class Gun : MonoBehaviour
     public int startAmmoHolderAmt = 36;
     public int maxAmmoHolderAmt = 36;
 
+    // STATE
     public bool isActiveGun = false;
     public bool canShoot;
 
@@ -96,6 +98,7 @@ public abstract class Gun : MonoBehaviour
     {
         if (emptySound != null) audioSource.clip = emptySound;
         audioSource.Play();
+        //StartCoroutine(Reload());
     }
 
     public void DisableGun()
@@ -123,6 +126,26 @@ public abstract class Gun : MonoBehaviour
             audioSource.clip = shootSound;
        
         audioSource.Play();
+    }
+
+    public void SetAmmo(int num)
+    {
+        Debug.Log("SETTING AMMO");
+        int ammoLeft = num;
+        clip.clipAmmo = 0;
+        ammoHolder.currentCapacity = 0;
+
+        while (!clip.isFull && ammoLeft > 0)
+        {
+            clip.AddAmmo(1);
+            ammoLeft--;
+        }
+        ammoHolder.AddAmmo(ammoLeft);
+    }
+
+    public void Update()
+    {
+        
     }
 
     public int GetClipAmmo()

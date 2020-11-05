@@ -1010,7 +1010,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shotSFX: {fileID: 7800073592349179588}
-  speed: 5
+  speed: 3
   points: 3
 --- !u!95 &3276378649100071594
 Animator:

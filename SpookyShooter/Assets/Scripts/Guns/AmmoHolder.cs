@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public enum AmmoTypes { toy, pistol }
+public enum AmmoTypes { scifi, pistol }
 
 public class AmmoHolder
 {

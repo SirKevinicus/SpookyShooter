@@ -8,6 +8,7 @@ public class AmmoDrop : MonoBehaviour
     private AudioSource audioSource;
     public AudioClip pickupSound;
     public int num;
+    public bool pickedUp = false;
 
     private void Start()
     {
@@ -21,13 +22,13 @@ public class AmmoDrop : MonoBehaviour
         this.num = num;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision other)
     {
         Player player;
-        if((player = other.GetComponent<Player>()))
+        if (!pickedUp & (player = other.transform.GetComponent<Player>()))
         {
-            bool pickedUp = player.PickUpAmmo(type, num);
-            if(pickedUp)
+            pickedUp = player.PickUpAmmo(type, num);
+            if (pickedUp)
             {
                 audioSource.Play();
                 Destroy(gameObject, 1f);

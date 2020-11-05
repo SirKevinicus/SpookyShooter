@@ -2,22 +2,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class Zombie : Enemy
 {
+    // VARIABLES
     [SerializeField] private float m_moveSpeed = 2;
-    [SerializeField] private float m_turnSpeed = 200;
+    private readonly float m_interpolation = 10f;
 
+    // COMPONENTS
     [SerializeField] public Animator animator = null;
     [SerializeField] private Rigidbody m_rigidBody = null;
     [SerializeField] private ConeCollider detect_cone = null;
 
+    // STATE
+    public bool freeze = false;
     public EntityState currentState;
+    public delegate void OnDie(Zombie z);
+    public event OnDie onDie;
 
+    // REFERENCES
     public Player player;
     public bool detectedPlayer = false;
 
-    private readonly float m_interpolation = 1f;
 
     private Vector3 m_currentDirection = Vector3.zero;
 
@@ -25,29 +32,32 @@ public class Zombie : Enemy
     {
         if (!animator) { GetComponentInChildren<Animator>(); }
         if (!m_rigidBody) { gameObject.GetComponent<Rigidbody>(); }
-        if (!detect_cone) { GetComponent<ConeCollider>(); }
+        if (!detect_cone) { GetComponentInChildren<ConeCollider>(); }
+
+        SetColliderState(false);
+        SetRigidbodyState(true);
 
         currentState = new ZombieIdle(this);
     }
 
+    public void Initialize()
+    {
+        
+    }
+
     private void Update()
     {
-        currentState.OnStateUpdate();
-
-        if(isDead)
-        {
-            ChangeState(new ZombieDead(this));
-        }
+        if(!freeze) currentState.OnStateUpdate();
     }
 
     private void FixedUpdate()
     {
-        currentState.OnStateFixedUpdate();
+        if(!freeze) currentState.OnStateFixedUpdate();
     }
 
     private void LateUpdate()
     {
-        transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
+        if(!freeze) transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
     }
 
     public void WalkTowardsPlayer()
@@ -82,6 +92,11 @@ public class Zombie : Enemy
 
     private IEnumerator IWaitThenDelete()
     {
+        animator.enabled = false;
+        SetColliderState(true);
+        SetRigidbodyState(false);
+        onDie?.Invoke(this);
+        GetComponent<DropAmmo>().SpawnAmmoDrop(transform.position);
         yield return new WaitForSeconds(5f);
         Destroy(this.gameObject);
     }
@@ -108,6 +123,32 @@ public class Zombie : Enemy
         {
             player = null;
             detectedPlayer = false;
+        }
+    }
+
+    private void SetRigidbodyState(bool state)
+    {
+        Rigidbody[] rigidbodies = GetComponentsInChildren<Rigidbody>();
+        foreach(Rigidbody rb in rigidbodies)
+        {
+            rb.isKinematic = state;
+        }
+
+        GetComponent<Rigidbody>().isKinematic = !state;
+    }
+
+    private void SetColliderState(bool state)
+    {
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        foreach (Collider coll in colliders)
+        {
+            coll.enabled = state;
+        }
+
+        Collider[] parentColliders = GetComponents<Collider>();
+        foreach(Collider c in parentColliders)
+        {
+            c.enabled = !state;
         }
     }
 }

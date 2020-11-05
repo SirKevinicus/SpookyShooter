@@ -462,6 +462,7 @@ Transform:
   m_Children:
   - {fileID: 2642112702265506203}
   - {fileID: 2644977824207984569}
+  - {fileID: 5904666949632808545}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 5, y: 180, z: 0}
@@ -573,14 +574,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d71ac2f96185214d84e7d16a01dc6bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxAmmo: 36
   maxClipAmmo: 6
-  startAmmo: 36
-  startClipAmmo: 6
   clipAmmo: 6
-  currentAmmo: 36
-  hasClipAmmo: 1
   hasAmmo: 1
+  isFull: 1
 --- !u!114 &138165131184468589
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -596,7 +593,8 @@ MonoBehaviour:
   shootSound: {fileID: 8300000, guid: c1f63923be799dc4c9a740b6ffdca404, type: 3}
   emptySound: {fileID: 8300000, guid: 02ed96cad15f05549bc35951a748483a, type: 3}
   reloadSound: {fileID: 8300000, guid: daaaa2c4a56faf94c9ca666e9dc1c732, type: 3}
-  ammo: {fileID: 4512474656873550348}
+  clip: {fileID: 0}
+  gunEnd: {fileID: 0}
   dmgDealtUIPrefab: {fileID: 25451943619227647, guid: cd53b461339ccda4b87d562acbfbf417,
     type: 3}
   damage: 10
@@ -605,7 +603,9 @@ MonoBehaviour:
   gunType: 0
   ammoType: 1
   ammoPerShot: 1
-  reloadTime: 2
+  reloadTime: 1.3
+  startAmmoHolderAmt: 36
+  maxAmmoHolderAmt: 36
   isActiveGun: 1
   canShoot: 1
   fpsCam: {fileID: 0}
@@ -631,3 +631,33 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1 &5892702844928049990
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5904666949632808545}
+  m_Layer: 8
+  m_Name: GunEnd
+  m_TagString: Untagged
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5904666949632808545
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5892702844928049990}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.0214, z: -0.151}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2644852948511604967}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
